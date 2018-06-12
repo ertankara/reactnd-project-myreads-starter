@@ -1,28 +1,43 @@
 import React from 'react'
 import * as BooksAPI from './BooksAPI'
 import Search from './Search';
-import BookList from './BookList';
+import ListBooks from './ListBooks';
 import './App.css'
 
 class BooksApp extends React.Component {
   state = {
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the URL in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good URL they can bookmark and share.
-     */
-    showSearchPage: false
+    currentlyReading: [],
+    wantToRead: [],
+    read: []
   }
 
   componentDidMount() {
-    BooksAPI
-      .getAll().then(data => {
-        console.log("DATA: ", data)
+    const currentlyReading = [],
+          wantToRead = [],
+          read = [];
+
+    BooksAPI.getAll()
+    .then(books => {
+      books.forEach(book => {
+        if (book.shelf === 'currentlyReading') {
+          currentlyReading.push(book);
+        }
+        else if (book.shelf === 'wantToRead') {
+          wantToRead.push(book);
+        }
+        else if (books.shelf === 'read') {
+          read.push(book);
+        }
       })
-      .catch(err => {
-        console.log(err)
-      })
+
+      this.setState({
+        currentlyReading, wantToRead, read
+      });
+
+    })
+    .catch(err => {
+      console.error('Error occurred while fetching books frop API');
+    })
   }
 
   render() {
@@ -34,13 +49,13 @@ class BooksApp extends React.Component {
           </div>
           <div className="list-books-content">
             <div>
-              <BookList bookShelfTitle="Currently Reading" />
-              <BookList bookShelfTitle="Want to Read" />
-              <BookList bookShelfTitle="Read" />
+              <ListBooks bookList={this.state.currentlyReading} bookShelfTitle="Currently Reading" />
+              <ListBooks bookList={this.state.wantToRead} bookShelfTitle="Want to Read" />
+              <ListBooks bookList={this.state.read} bookShelfTitle="Read" />
             </div>
           </div>
           <div className="open-search">
-            <a onClick={() => this.setState({ showSearchPage: true })}>Add a book</a>
+            <a>Add a book</a>
           </div>
         </div>
         }
