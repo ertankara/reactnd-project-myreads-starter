@@ -1,14 +1,14 @@
 import React from 'react'
 import * as BooksAPI from './BooksAPI'
 import Search from './Search';
+import { Link } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import ListBooks from './ListBooks';
 import './App.css'
 
 class BooksApp extends React.Component {
-  constructor(props) {
-    super(props)
-    this.shelfChangeHandler = this.shelfChangeHandler.bind(this);
-  }
+  shelfChangeHandler = this.shelfChangeHandler.bind(this);
+
   state = {
     currentlyReading: [],
     wantToRead: [],
@@ -54,31 +54,35 @@ class BooksApp extends React.Component {
   render() {
     return (
       <div className="app">
-        <div className="list-books">
-          <div className="list-books-title">
-            <h1>MyReads</h1>
-          </div>
-          <div className="list-books-content">
-            <div>
-              <ListBooks
-                onChangeShelf={this.shelfChangeHandler}
-                bookList={this.state.currentlyReading}
-                bookShelfTitle="Currently Reading" />
-              <ListBooks
-                onChangeShelf={this.shelfChangeHandler}
-                bookList={this.state.wantToRead}
-                bookShelfTitle="Want to Read" />
-              <ListBooks
-                onChangeShelf={this.shelfChangeHandler}
-                bookList={this.state.read}
-                bookShelfTitle="Read" />
+        <Route exact path='/' render={() => (
+          <div className="list-books">
+            <div className="list-books-title">
+              <h1>MyReads</h1>
+            </div>
+            <div className="list-books-content">
+              <div>
+                <ListBooks
+                  onChangeShelf={this.shelfChangeHandler}
+                  bookList={this.state.currentlyReading}
+                  bookShelfTitle="Currently Reading" />
+                <ListBooks
+                  onChangeShelf={this.shelfChangeHandler}
+                  bookList={this.state.wantToRead}
+                  bookShelfTitle="Want to Read" />
+                <ListBooks
+                  onChangeShelf={this.shelfChangeHandler}
+                  bookList={this.state.read}
+                  bookShelfTitle="Read" />
+              </div>
+            </div>
+            <div className="open-search">
+              <Link to="/search">Add a book</Link>
             </div>
           </div>
-          <div className="open-search">
-            <a>Add a book</a>
-          </div>
-        </div>
-        }
+        )}>
+        </Route>
+
+        <Route exact path='/search' render={() => (<Search />)} />
       </div>
     )
   }
