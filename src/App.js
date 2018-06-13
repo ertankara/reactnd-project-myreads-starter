@@ -5,20 +5,23 @@ import ListBooks from './ListBooks';
 import './App.css'
 
 class BooksApp extends React.Component {
+  constructor(props) {
+    super(props)
+    this.shelfChangeHandler = this.shelfChangeHandler.bind(this);
+  }
   state = {
     currentlyReading: [],
     wantToRead: [],
     read: []
   }
 
-  componentDidMount() {
+  getBooks() {
     const currentlyReading = [],
           wantToRead = [],
           read = [];
 
     BooksAPI.getAll()
     .then(books => {
-      console.log(books)
       books.forEach(book => {
         if (book.shelf === 'currentlyReading') {
           currentlyReading.push(book);
@@ -33,12 +36,19 @@ class BooksApp extends React.Component {
       this.setState({ currentlyReading, wantToRead, read });
     })
     .catch(err => {
-      console.error('Error occurred while fetching books from API');
+      console.error('Error occurred while fetching books from API', err);
     })
   }
 
-  shelfChangeHandler() {
-    console.log('Change event fired');
+  componentDidMount() {
+    this.getBooks()
+  }
+
+  shelfChangeHandler(book, newShelf) {
+    BooksAPI.update(book, newShelf)
+    // Re-render books with updated shelf
+    this.getBooks()
+
   }
 
   render() {
@@ -50,9 +60,18 @@ class BooksApp extends React.Component {
           </div>
           <div className="list-books-content">
             <div>
-              <ListBooks onChangeShelf={this.shelfChangeHandler} bookList={this.state.currentlyReading} bookShelfTitle="Currently Reading" />
-              <ListBooks onChangeShelf={this.shelfChangeHandler} bookList={this.state.wantToRead} bookShelfTitle="Want to Read" />
-              <ListBooks onChangeShelf={this.shelfChangeHandler} bookList={this.state.read} bookShelfTitle="Read" />
+              <ListBooks
+                onChangeShelf={this.shelfChangeHandler}
+                bookList={this.state.currentlyReading}
+                bookShelfTitle="Currently Reading" />
+              <ListBooks
+                onChangeShelf={this.shelfChangeHandler}
+                bookList={this.state.wantToRead}
+                bookShelfTitle="Want to Read" />
+              <ListBooks
+                onChangeShelf={this.shelfChangeHandler}
+                bookList={this.state.read}
+                bookShelfTitle="Read" />
             </div>
           </div>
           <div className="open-search">
