@@ -30,14 +30,11 @@ class BooksApp extends React.Component {
           read.push(book);
         }
       })
-
       this.setState({ currentlyReading, wantToRead, read });
-
     })
     .catch(err => {
       console.error('Error occurred while fetching books from API');
     })
-
   }
 
   shelfChangeHandler() {
