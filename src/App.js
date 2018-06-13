@@ -37,6 +37,11 @@ class BooksApp extends React.Component {
     .catch(err => {
       console.error('Error occurred while fetching books from API');
     })
+
+  }
+
+  shelfChangeHandler() {
+    console.log('Change event fired');
   }
 
   render() {
@@ -48,9 +53,9 @@ class BooksApp extends React.Component {
           </div>
           <div className="list-books-content">
             <div>
-              <ListBooks bookList={this.state.currentlyReading} bookShelfTitle="Currently Reading" />
-              <ListBooks bookList={this.state.wantToRead} bookShelfTitle="Want to Read" />
-              <ListBooks bookList={this.state.read} bookShelfTitle="Read" />
+              <ListBooks onChangeShelf={this.shelfChangeHandler} bookList={this.state.currentlyReading} bookShelfTitle="Currently Reading" />
+              <ListBooks onChangeShelf={this.shelfChangeHandler} bookList={this.state.wantToRead} bookShelfTitle="Want to Read" />
+              <ListBooks onChangeShelf={this.shelfChangeHandler} bookList={this.state.read} bookShelfTitle="Read" />
             </div>
           </div>
           <div className="open-search">
