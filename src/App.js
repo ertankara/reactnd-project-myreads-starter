@@ -18,6 +18,7 @@ class BooksApp extends React.Component {
 
     BooksAPI.getAll()
     .then(books => {
+      console.log(books)
       books.forEach(book => {
         if (book.shelf === 'currentlyReading') {
           currentlyReading.push(book);
@@ -25,18 +26,16 @@ class BooksApp extends React.Component {
         else if (book.shelf === 'wantToRead') {
           wantToRead.push(book);
         }
-        else if (books.shelf === 'read') {
+        else if (book.shelf === 'read') {
           read.push(book);
         }
       })
 
-      this.setState({
-        currentlyReading, wantToRead, read
-      });
+      this.setState({ currentlyReading, wantToRead, read });
 
     })
     .catch(err => {
-      console.error('Error occurred while fetching books frop API');
+      console.error('Error occurred while fetching books from API');
     })
   }
 
