@@ -1,8 +1,7 @@
 import React from 'react'
 import * as BooksAPI from './BooksAPI'
 import Search from './Search';
-import { Link } from 'react-router-dom';
-import { Route } from 'react-router-dom';
+import { Link, Route } from 'react-router-dom';
 import ListBooks from './ListBooks';
 import './App.css'
 
@@ -14,6 +13,7 @@ class BooksApp extends React.Component {
     currentlyReading: [],
     wantToRead: [],
     read: [],
+    allBooks: [],
 
     query: '',
     queryResult: []
@@ -22,7 +22,8 @@ class BooksApp extends React.Component {
   getBooks() {
     const currentlyReading = [],
           wantToRead = [],
-          read = [];
+          read = [],
+          allBooks = []
 
     BooksAPI.getAll()
     .then(books => {
@@ -36,8 +37,10 @@ class BooksApp extends React.Component {
         else if (book.shelf === 'read') {
           read.push(book);
         }
+        // Gather all the books here no matter which shelf they're on
+        allBooks.push(book)
       })
-      this.setState({ currentlyReading, wantToRead, read });
+      this.setState({ currentlyReading, wantToRead, read, allBooks });
     })
     .catch(err => {
       console.error('Error occurred while fetching books from API', err);
@@ -52,19 +55,41 @@ class BooksApp extends React.Component {
     BooksAPI.update(book, newShelf)
     // Re-render books with updated shelf
     this.getBooks()
-
   }
 
+  timeout;
   searchQueryHandler(query) {
     this.setState({ query })
     if (!query) {
       return
     }
 
-    BooksAPI.search(query)
-    .then(queryResult => {
-      this.setState({ queryResult })
-    })
+    clearTimeout(this.timeout)
+
+    this.timeout = setTimeout(() => {
+      BooksAPI.search(query.trim())
+      .then(searchResults => {
+        console.log(searchResults)
+        searchResults = searchResults.map(searchedBook => {
+          let matchFound = false;
+          for (const book of this.state.allBooks) {
+            if (searchedBook.id === book.id) {
+              matchFound = true;
+              searchedBook.shelf = book.shelf
+              break;
+            }
+          }
+          if (!matchFound)
+            searchedBook.shelf = 'none';
+
+          return searchedBook;
+        })
+
+        this.setState({
+          queryResult: searchResults
+        })
+      })
+    }, 500)
   }
 
   render() {
