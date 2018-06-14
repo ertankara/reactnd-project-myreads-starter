@@ -57,12 +57,12 @@ class BooksApp extends React.Component {
 
   searchQueryHandler(query) {
     this.setState({ query })
-    if (!query)
-      return;
+    if (!query) {
+      return
+    }
 
     BooksAPI.search(query)
     .then(queryResult => {
-      console.log('Returned book data', queryResult)
       this.setState({ queryResult })
     })
   }
