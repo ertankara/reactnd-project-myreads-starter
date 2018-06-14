@@ -69,7 +69,6 @@ class BooksApp extends React.Component {
     this.timeout = setTimeout(() => {
       BooksAPI.search(query.trim())
       .then(searchResults => {
-        console.log(searchResults)
         searchResults = searchResults.map(searchedBook => {
           let matchFound = false;
           for (const book of this.state.allBooks) {

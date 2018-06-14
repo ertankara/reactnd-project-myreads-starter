@@ -20,7 +20,7 @@ class ListBooks extends Component {
                         onChange={(e) =>
                         { this.props.onChangeShelf(book, e.target.value);
                         if (e.target.value === 'none')
-                          e.target.parentElement.parentElement.firstElementChild.classList.add('book-cover-removed')}}>
+                          e.target.parentElement.previousElementSibling.classList.add('book-cover-removed')}}>
                             <option value="move" disabled>Move to...</option>
                             <option value="currentlyReading">Currently Reading</option>
                             <option value="wantToRead">Want to Read</option>
