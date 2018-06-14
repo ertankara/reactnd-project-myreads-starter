@@ -8,11 +8,15 @@ import './App.css'
 
 class BooksApp extends React.Component {
   shelfChangeHandler = this.shelfChangeHandler.bind(this);
+  searchQueryHandler = this.searchQueryHandler.bind(this);
 
   state = {
     currentlyReading: [],
     wantToRead: [],
-    read: []
+    read: [],
+
+    query: '',
+    queryResult: []
   }
 
   getBooks() {
@@ -51,6 +55,18 @@ class BooksApp extends React.Component {
 
   }
 
+  searchQueryHandler(query) {
+    this.setState({ query })
+    if (!query)
+      return;
+
+    BooksAPI.search(query)
+    .then(queryResult => {
+      console.log('Returned book data', queryResult)
+      this.setState({ queryResult })
+    })
+  }
+
   render() {
     return (
       <div className="app">
@@ -82,7 +98,13 @@ class BooksApp extends React.Component {
         )}>
         </Route>
 
-        <Route exact path='/search' render={() => (<Search />)} />
+        <Route exact path='/search' render={() => (
+          <Search
+            result={this.state.queryResult}
+            currentQuery={this.state.query}
+            onQueryInput={this.searchQueryHandler}
+            onChangeShelf={this.shelfChangeHandler} />
+        )} />
       </div>
     )
   }
